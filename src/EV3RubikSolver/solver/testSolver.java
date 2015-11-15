@@ -2,8 +2,6 @@ package EV3RubikSolver.solver;
 
 import java.util.ArrayList;
 
-import EV3RubikSolver.sensorfilter.SensorAndFilterSample;
-import EV3RubikSolver.sensorfilter.SensorAndFilterSample.autoAdjustFilter;
 import lejos.hardware.Brick;
 import lejos.hardware.BrickFinder;
 import lejos.hardware.Button;
@@ -13,8 +11,11 @@ import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.Font;
 import lejos.hardware.lcd.GraphicsLCD;
 import lejos.hardware.port.Port;
+import lejos.hardware.port.SensorPort;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
+import lejos.robotics.Color;
+import lejos.robotics.ColorAdapter;
 import lejos.robotics.SampleProvider;
 import lejos.robotics.filter.AbstractFilter;
 import lejos.utility.Delay;
@@ -24,9 +25,9 @@ public class testSolver {
 	    {
 	        //System.out.println("Running...");
 		   introMessage();
-		   testRubikSolver();
-		   testEV3Ultrasonic();
-		   testEV3ColorSensor();
+		   // testRubikSolver();
+		   //testEV3Ultrasonic();
+		   testEV3ColorSensorRGB();
 		}
 	    
 	    public testSolver()
@@ -227,6 +228,32 @@ public class testSolver {
 	  }
 	  
 
+	  public static void testEV3ColorSensorRGB()
+	  {
+		    /* Steps to initialize a sensor */
+	        GraphicsLCD g = BrickFinder.getDefault().getGraphicsLCD();
+	        g.setFont(Font.getDefaultFont());
+	        g.drawString("EV3 Color Sensor RGB...", 2,10,0);
+	        
+	        Brick brick = BrickFinder.getDefault();
+	        
+	        ColorAdapter adapter = new ColorAdapter(new EV3ColorSensor(SensorPort.S2));
+
+	        Key escape = brick.getKey("Escape");
+	        while(  !escape.isDown() ){
+
+	            Color c = adapter.getColor();
+	            String str = "r="+c.getRed()+",g="+c.getGreen()+",b="+c.getBlue();
+	            System.out.print(str);
+			    System.out.println();
+			    Delay.msDelay(500);
+//	            Delay.msDelay(1000);
+	            if( adapter.getColorID()==Color.RED ){ 
+	            	System.out.print("Red color, Stop !");
+	            	break;
+	            }
+	        }
+	  }
 	  public static void testRubikSolver()
 		{
 	        GraphicsLCD g = BrickFinder.getDefault().getGraphicsLCD();

@@ -96,14 +96,14 @@ public class SensorAndFilterSample {
      * Alternatives to the method below are: sensor.getMode(1) or
      * sensor.getRedMode()
      */
-    SampleProvider redMode = sensor.getRedMode();
+    SampleProvider rgbMode = sensor.getRGBMode();
 
     /*
      * Use a filter on the sample. The filter needs a source (a sensor or
      * another filter) for the sample. The source is provided in the constructor
      * of the filter
      */
-    SampleProvider reflectedLight = new autoAdjustFilter(redMode);
+    SampleProvider reflectedLight = new autoAdjustFilter(rgbMode);
 
     /*
      * Create an array of floats to hold the sample returned by the
