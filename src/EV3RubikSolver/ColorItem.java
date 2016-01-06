@@ -2,7 +2,7 @@ package EV3RubikSolver;
 
 public class ColorItem   implements Comparable <ColorItem>
 {  
-	private static String compareType ="W";
+	private static String compareType ="B";
 	private  int R, G, B;  
 	private  int Max, Min;  
 	int I;
@@ -27,31 +27,27 @@ public class ColorItem   implements Comparable <ColorItem>
 		switch(compareType)
 		{
 
-		case "W":
-			// 白色， blue 最强。 按blue排序，最大的。
-			return (this.B-ci.B) ;
-		case "G":
-			// 绿。 r-g 最小。
-			return -((this.R - this.G) -(ci.R-ci.G));
 		case "B":
-			// 绿，蓝。,R 最小
-			return -(this.R -ci.R);
+			// 绿，蓝。,R+g-2b 最小
+			return -((this.R+this.G - 2* this.B) -(ci.R+ci.G-2*ci.B));
 		case "R":
 			// 红色，G+B 最小。
 			return -((this.G+this.B)-(ci.G+ci.B));
-
-			
+		
+		case "G":
+			// 绿。 r-g+b 最小。
+			return -((this.R - this.G+this.B) -(ci.R-ci.G+this.B));
+		
+		case "Y":
+			// 黄，绿，蓝。 黄最红：）
+			return ((this.G-this.B)-(ci.G-ci.B));
+		
 		case "O":
 			// 橙色，R-g-b 最大。
 			return ((this.R-this.G-this.B)-(ci.R-ci.G-ci.B));
-
-
-			
-		case "Y":
-			// 黄，绿，蓝。 黄最红：）
-			return 1;
-
-
+		case "W":
+			// 白色， blue 最强。 按blue排序，最大的。
+			return (this.B-ci.B) ;
 		}
 		return 0;
 	}

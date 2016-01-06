@@ -30,7 +30,7 @@ public class RubikCube {
 	 * 区分识别Item的颜色
 	 */
 	private void DistinguishColor() {
-		String[] resultColor = {"W","G","B","R","O","Y"};
+		String[] resultColor = {"B","R","G","Y","O","W"};
 		
 		for (int n = 0; n < 6; n++)  
 		{  
@@ -74,12 +74,12 @@ public class RubikCube {
 	  
 	private int ColorValue(String c)  
 	{  
-	    if (c.contains("Y") || c.contains("y")) return 1;  
-	    if (c.contains("B") || c.contains("b")) return 2;  
-	    if (c.contains("R") || c.contains("r")) return 3;  
-	    if (c.contains("W") || c.contains("w")) return 4;  
-	    if (c.contains("O") || c.contains("o")) return 5;  
-	    if (c.contains("G") || c.contains("g")) return 6;  
+	    if (c.contains("Y") || c.contains("y")) return 1;  // U
+	    if (c.contains("R") || c.contains("r")) return 2;  // R
+	    if (c.contains("W") || c.contains("w")) return 3;  // D
+	    if (c.contains("O") || c.contains("o")) return 4;  // L
+	    if (c.contains("B") || c.contains("b")) return 5;  // F
+	    if (c.contains("G") || c.contains("g")) return 6;  // B
 	    return 0;  
 	}
 	/**
@@ -174,41 +174,50 @@ public class RubikCube {
         	return Steps;
         String[] urdSteps = ResultSteps.split(" ");
         
+        System.out.print("Total steps:" + urdSteps.length + "\n");
         for(int i=0; i<urdSteps.length; i++) {
         	targetSide = urdSteps[i].substring(0, 1);
         	rotateCount =Integer.parseInt(urdSteps[i].substring(1, 2));		
-        	
-        	int findSidePosition = CenterStatus.FindCenter(targetSide);  
+        	System.out.print(targetSide);
+        	int findSidePosition = CenterStatus.FindCenter(targetSide);
+        	System.out.print("@" + findSidePosition);
+        	// { "U", "R", "D", "L", "F", "B" };
+        	//    0    1    2    3    4     5 
+        	// 老男孩的ROBOT和我们的不一样。爪子的位置不同。
+        	// 我们这个爪子是前后的。
+        	// 20151231 我错了，读完之后的魔方就是前向右的，所以还得恢复人家原来的，所以不是完整出来。
+        	// 之前出不来是 判断字符串相等出错了。
         
 			// Rotate to corrent bottom
 			switch (findSidePosition) {
-			case 2:
+			case 2: // d
 				// Do Nothing
 				break;
-			case 1:
+			case 1: // r
 				CenterStatus.RotatePaw();
 				Steps.add(new MoveStep(MoveType.RotatePaw, 0));
 				break;
-			case 0:
+			case 0: // u
 				CenterStatus.RotatePaw();
 				Steps.add(new MoveStep(MoveType.RotatePaw, 0));
 				CenterStatus.RotatePaw();
 				Steps.add(new MoveStep(MoveType.RotatePaw, 0));
 				break;
-			case 3:
+			case 3: // l
 				CenterStatus.RotateBottom(true);
 				CenterStatus.RotateBottom(true);
 				Steps.add(new MoveStep(MoveType.RotateBottom, 2));
 				CenterStatus.RotatePaw();
 				Steps.add(new MoveStep(MoveType.RotatePaw, 0));
 				break;
-			case 4:
+		
+			case 4: // f
 				CenterStatus.RotateBottom(true);
 				Steps.add(new MoveStep(MoveType.RotateBottom, 1));
 				CenterStatus.RotatePaw();
 				Steps.add(new MoveStep(MoveType.RotatePaw, 0));
 				break;
-			case 5:
+			case 5: //b
 				CenterStatus.RotateBottom(false);
 				Steps.add(new MoveStep(MoveType.RotateBottom, 3));
 				CenterStatus.RotatePaw();
@@ -219,6 +228,7 @@ public class RubikCube {
 			Steps.add(new MoveStep(MoveType.RotateBottomSide,rotateCount));
 //			Steps[Steps.Count - 1].OrginStep = currentStep;
 		}
+        System.out.println();
 		return Steps;
 	}
 	public void rest() {

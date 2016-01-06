@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import lejos.hardware.Brick;
 import lejos.hardware.BrickFinder;
+import lejos.hardware.Button;
 import lejos.hardware.Sound;
 import lejos.hardware.lcd.Font;
 import lejos.hardware.lcd.GraphicsLCD;
@@ -48,7 +49,7 @@ public class Robot {
 	// the motor angle for base to rotate 90 degree
 	static int BaseOneQuarter = -270; // 36:12 4个位置。 360/4 * (36/12)
 	// the fix angle for base
-	static int BaseRotateFix = 0; // 这个打算拧过一点，再回复。
+	static int BaseRotateFix = -30; // 这个打算拧过一点，再回复。
 	// the fix angle of base position fix
 	static int FixBasePositionOffset = 16;
 	// the init position of color sensor motor(this will be set automatically)
@@ -109,17 +110,18 @@ public class Robot {
 		while (colorMonitor.isMoving()) {
 			Thread.yield();
 		}
+		colorMonitor.stop();
 
-		// 从极限位置反向转动100度。
-		colorMonitor.rotate(-100, false);
-
-		// 20%
-		colorMonitor.setSpeed((int) (colorMonitor.getMaxSpeed() * 0.2));
-		colorMonitor.forward();
-
-		while (colorMonitor.isMoving()) {
-			Thread.yield();
-		}
+//		// 从极限位置反向转动100度。
+//		colorMonitor.rotate(-100, false);
+//
+//		// 20%
+//		colorMonitor.setSpeed((int) (colorMonitor.getMaxSpeed() * 0.2));
+//		colorMonitor.forward();
+//
+//		while (colorMonitor.isMoving()) {
+//			Thread.yield();
+//		}
 		// 传感器就位，重置位置计数，做为初始位置。
 		colorMonitor.resetTachoCount();
 		scanAway();
@@ -131,12 +133,13 @@ public class Robot {
 
 		// 从极限位置反向转动340度。
 		colorMonitor.rotateTo(-340);
+		colorMonitor.stop();
 	}
 
 	// 初始化爪子电机。
 	private static void initPaw() {
 		// 20%开始。
-		paw.setSpeed((int) (colorMonitor.getMaxSpeed() * 0.2));
+		paw.setSpeed((int) (paw.getMaxSpeed() * 0.2));
 		paw.backward();
 		// 转到极限
 		while (paw.isMoving()) {
@@ -146,7 +149,7 @@ public class Robot {
 		paw.resetTachoCount();
 
 		// 从极限位置转动10度,70%功率。
-		paw.setSpeed((int) (colorMonitor.getMaxSpeed() * 0.7));
+		paw.setSpeed((int) (paw.getMaxSpeed() * 0.7));
 		paw.rotate(10);
 
 	}
@@ -162,10 +165,10 @@ public class Robot {
 		// bottom.rotate(-nFixAngle);
 		// paw.rotateTo(0);
 
-		paw.setSpeed((int) (colorMonitor.getMaxSpeed() * 0.60));
+		paw.setSpeed((int) (paw.getMaxSpeed() * 0.60));
 		paw.rotateTo(nPawHoldPosition);
-		Thread.sleep(100);
-		bottom.setSpeed((int) (colorMonitor.getMaxSpeed() * 1.0));
+		Thread.sleep(200);
+		bottom.setSpeed((int) (paw.getMaxSpeed() * 1.0));
 		bottom.rotate(nQuarter * BaseOneQuarter + nFixAngle);
 		bottom.rotate(-nFixAngle);
 		paw.rotateTo(10);
@@ -193,15 +196,15 @@ public class Robot {
 		// paw.rotateTo(nPawHoldPosition);
 		// paw.setSpeed(1000);
 		// paw.rotateTo(0);
-		paw.setSpeed((int) (colorMonitor.getMaxSpeed() * 0.60));
+		paw.setSpeed((int) (paw.getMaxSpeed() * 0.60));
 		paw.rotateTo(nPawHoldPosition);
 		Thread.sleep(100);
-		paw.setSpeed((int) (colorMonitor.getMaxSpeed() * 0.90));
+		paw.setSpeed((int) (paw.getMaxSpeed() * 0.90));
 		paw.rotateTo(195);
-		paw.setSpeed((int) (colorMonitor.getMaxSpeed() * 0.75));
+		paw.setSpeed((int) (paw.getMaxSpeed() * 0.75));
 		paw.rotate(-15);
 		Thread.sleep(70);
-		paw.setSpeed((int) (colorMonitor.getMaxSpeed() * 0.60));
+		paw.setSpeed((int) (paw.getMaxSpeed() * 0.60));
 		paw.rotateTo(nPawHoldPosition);
 		Thread.sleep(100);
 		paw.rotateTo(10);
@@ -272,12 +275,12 @@ public class Robot {
 	 */
 	public static void ReadOneSide(int nSideIndex) throws Exception {
 		int[][] idx = { 
-				{ 4, 7, 8, 5, 2, 1, 0, 3, 6 },				// 5 RF 读起
-				{ 4, 3, 6, 7, 8, 5, 2, 1, 0 },
-				{ 4, 1, 0, 3, 6, 7, 8, 5, 2 },
-				{ 4, 5, 2, 1, 0, 3, 6, 7, 8 },				
-				{ 4, 7, 8, 5, 2, 1, 0, 3, 6},				// 先读的DF
-				{ 4, 1, 0, 3, 6, 7, 8, 5, 2 } };
+				{ 4, 5, 2, 1, 0, 3, 6, 7, 8 },				// 5 BR 读起 5
+				{ 4, 7, 8, 5, 2, 1, 0, 3, 6 },				// 1 RF 读起 7
+				{ 4, 3, 6, 7, 8, 5, 2, 1, 0 }, 				// 4 FL 3
+				{ 4, 1, 0, 3, 6, 7, 8, 5, 2 },				// 3 lb 1 
+				{ 4, 3, 6, 7, 8, 5, 2, 1, 0 },				// 2 先读的DR 3
+				{ 4, 3, 6, 7, 8, 5, 2, 1, 0 } };			// 0 ul 3
 	
 // 
 //		int[][] idx1 = { { 4, 6, 7, 8, 5, 2, 1, 0, 3 },
@@ -288,7 +291,7 @@ public class Robot {
 
 		int i = 0;
 		colorMonitor.setSpeed((int) (colorMonitor.getMaxSpeed() * 0.8));
-		bottom.setSpeed((int) (colorMonitor.getMaxSpeed() * 0.80));
+		bottom.setSpeed((int) (bottom.getMaxSpeed() * 0.80));
 
 		// Read Center Color
 		colorMonitor.rotateTo(ColorMotorBaseAngle - ColorMotorOffset[nSideIndex][0]);
@@ -328,7 +331,7 @@ public class Robot {
 
 		for (int i = 0; i < 1; i++) {
 			// Add a delay time for the motor to be stable
-			if(i>0) colorMonitor.rotate(mSpinAngle);
+			// if(i>0) colorMonitor.rotate(mSpinAngle);
 			Thread.sleep(delay);
 			colors[i] = colorAdapter.getColor();
 			tmpColor = colors[i].getRed() + colors[i].getGreen()
@@ -388,9 +391,10 @@ public class Robot {
 		System.out.print("ResultSteps:" + ResultSteps);
 		System.out.println();
 		moveSteps = cube.SolveRobotMoves(ResultSteps);
-		System.out.print("ResultSteps:" + moveSteps.size());
+		System.out.print("Result moves:" + moveSteps.size());
 		System.out.println();
 		for (int i = 0; i < moveSteps.size(); i++) {
+			
 			count = moveSteps.get(i).step;
 			if (count == 3)
 				count = -1;
@@ -411,12 +415,17 @@ public class Robot {
 				break;
 			default:
 				break;
-
 			}
+			waitPress();
 		}
+		System.out.print("Solve rubik OK!\n");
 
 	}
-
+    private static void waitPress() {
+	// TODO Auto-generated method stub
+    	Button.waitForAnyPress();
+		if(Button.ESCAPE.isDown()) System.exit(0);
+   }
 	// check if the cube is still on the base
 	public static boolean CheckCubeReady() throws Exception {
 		// if already error, return directly to avoid play *.wav again

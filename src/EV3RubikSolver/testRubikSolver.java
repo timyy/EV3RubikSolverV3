@@ -3,6 +3,7 @@
  */
 package EV3RubikSolver;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import EV3RubikSolver.solver.Solver;
@@ -30,6 +31,9 @@ public class testRubikSolver {
 	    {
 	        //System.out.println("Running...");
 		   Sound.beep();
+//		   Int2Voice iv = new Int2Voice();
+//		   iv.testVoice();
+//		   waitPress();
 		   // introMessage();
 		   // testRubik_Solver();
 		   //testEV3Ultrasonic();
@@ -46,6 +50,7 @@ public class testRubikSolver {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+			    Sound.playSample(new File(""));
 		   		waitPress();
 		   }
 		}
